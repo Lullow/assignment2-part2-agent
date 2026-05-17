@@ -21,16 +21,29 @@ class ToolCall(BaseModel):
   )
 
 
-  # Each tool can require different arguments.
-  # For example:
-  # - bash: {"command": "ls -la"}
-  # - read_file: {"path": "README.md"}
-  # - edit_file_section: {"path": "...", "old_text": "...", "new_text": "..."}
-  arguments: dict[str, Any] = Field(
-    default_factory=dict,
-    description="Arguments for the selected tool."
+  # Used when tool_name = "bash"
+  command: str | None = Field(
+    default=None,
+    description="Bash command to run when using the bash tool"
   )
 
+  # Used when tool_name == "read_file" or "edit_file_section"
+  path: str | None = Field(
+    default=None,
+    description="Path to the file that should be read or edited."
+  )
+
+  # Used when tool_name == "edit_file_section"
+  old_text: str | None = Field(
+    default=None,
+    description="Exact text section that should be replaced."
+  )
+
+  # Used when tool_name == "edit_file_section"
+  new_text: str | None = Field(
+    default=None,
+    description="New text that should replace old_text"
+  )
 
 
 class YieldToUser(BaseModel):
@@ -113,4 +126,22 @@ def validate_agent_decision(decision: AgentDecision) -> None:
 
   if decision.decision == "yield_to_user" and decision.tool_call is not None:
     raise ValueError("Decision is 'yield_to_user', but tool_call was also provided.")
+
+
+  tool_call = decision.tool_call
+
+  if tool_call.tool_name == "bash" and not tool_call.command:
+    raise ValueError("bash tool requires a command.")
+
+  if tool_call.tool_name == "read_file" and not tool_call.path:
+    raise ValueError("read_file_section requires a path.")
+
+  if tool_call.tool_name == "edit_file_section":
+    if not tool_call.path:
+      raise ValueError("edit_file_section tool requires a path.")
+    if not tool_call.old_text:
+      raise ValueError("edit_file_section tool requires old_text.")
+    if tool_call.new_text is None:
+      raise ValueError("edit_file_section tool requires new_text.")
+
 

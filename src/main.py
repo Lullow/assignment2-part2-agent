@@ -1,4 +1,4 @@
-from config_loader import load_system_prompt
+"""from config_loader import load_system_prompt
 from schemas import AgentDecision, ToolCall, YieldToUser, validate_agent_decision
 
 
@@ -46,7 +46,43 @@ def main() -> None:
   print(tool_decision.model_dump_json(indent=2))
   print()
   print("Example final decision:")
-  print(final_decision.model_dump_json(indent=2))
+  print(final_decision.model_dump_json(indent=2))"""
+
+
+from config_loader import load_system_prompt
+from llm_client import get_agent_decision
+
+
+def main() -> None:
+    # Load the SWE/safety system prompt from config
+    system_prompt = load_system_prompt()
+
+    messages = [
+        {
+            "role": "system",
+            "content": system_prompt,
+        },
+        {
+            "role": "user",
+            "content": "List the files in this project. Do not execute anything yet, only choose the correct next structured decision.",
+        },
+    ]
+
+    print("Assignment 2 Part 2 Agent")
+    print("Requesting structured decision from model...")
+    print()
+
+    # Test that the model can return a structured AgentDecision.
+    decision = get_agent_decision(messages)
+
+    print("Structured decision received:")
+    print(decision.model_dump_json(indent=2))
+
+
+if __name__ == "__main__":
+    main()
+
+
 
 if __name__ == "__main__":
   main()

@@ -14,7 +14,7 @@ class ToolCall(BaseModel):
 
   tool_name: Literal[
     "bash",
-    "readl_file",
+    "read_file",
     "edit_file_section",
   ] = Field(
     description="The name of the tool the model wants to call"
@@ -98,6 +98,33 @@ class AgentDecision(BaseModel):
   yield_to_user: YieldToUser | None = Field(
     default=None,
     description="Final response detals. Required when decision is yield_to_user"
+  )
+
+
+
+class ToolResult(BaseModel):
+  """
+  Standard result returned by all tools.
+
+  This makes it easier for the agent loop to handle tool outputs
+  in one consistent format, no matter which tool was used.
+  """
+
+  success: bool = Field(
+    description="Weather the tool call succeeded."
+  )
+
+  tool_name: str = Field(
+    description="Name of the tool that was executed."
+  )
+
+  output: str = Field(
+    description="Tool output that can be sent back to the model."
+  )
+
+  error: str | None = Field(
+    default=None,
+    description="Error message if the tool failed."
   )
 
 

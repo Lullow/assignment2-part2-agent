@@ -49,6 +49,10 @@ def main() -> None:
   print(final_decision.model_dump_json(indent=2))"""
 
 
+
+
+
+"""
 from config_loader import load_system_prompt
 from llm_client import get_agent_decision
 
@@ -77,11 +81,44 @@ def main() -> None:
 
     print("Structured decision received:")
     print(decision.model_dump_json(indent=2))
+"""
+
+from schemas import ToolCall
+from tool_registry import execute_tool_call
 
 
-if __name__ == "__main__":
-    main()
+def main() -> None:
+  print("Assignment 2 Part 2 Agent")
+  print("Testing tool registry...")
+  print()
 
+  # Manual test cases for checking that the tool registry routes calls correctly.
+  tests = [
+    # Should pass: safe bash command.
+    ToolCall(
+      tool_name="bash",
+      command="ls -la",
+    ),
+
+    # Should pass if README.md exists in the project root.
+    ToolCall(
+      tool_name="read_file",
+      path="README.md",
+    ),
+
+    # Should be blocked by the bash safety layer.
+    ToolCall(
+      tool_name="bash",
+      command="rm README.md",
+    ),
+  ]
+
+  # Run each test call and print the structured ToolResult.
+  for test in tests:
+    print(f"Running tool: {test.tool_name}")
+    result = execute_tool_call(test)
+    print(result.model_dump_json(indent=2))
+    print("-" * 60)
 
 
 if __name__ == "__main__":

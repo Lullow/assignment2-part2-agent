@@ -24,5 +24,3 @@ def load_system_prompt() -> str:
     raise ValueError("System prompt file is empty.")
 
   return prompt
-
-

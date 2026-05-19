@@ -123,6 +123,8 @@ def main() -> None:
     print("-" * 60)"""
 
 
+
+"""# ------- TEST 5 ------------
 from agent_loop import run_agent
 from config_loader import load_system_prompt
 
@@ -153,7 +155,69 @@ def main() -> None:
 
     print()
     print("--------- FINAL ANSWER ---------")
-    print(final_answer)
+    print(final_answer)"""
+
+
+
+
+
+
+
+"""# ---------- TEST 6 ---------------
+from schemas import ToolCall
+from tool_registry import execute_tool_call
+
+
+def main() -> None:
+  print("Assignment 2 Part 2 Agent")
+  print("Testing edit_file_section tool...")
+  print()
+
+  test = ToolCall(
+    tool_name="edit_file_section",
+    path="README.md",
+    old_text="This is a Python-based software engineering agent for Assignment 2 Part 2.",
+    new_text=(
+      "This is a Python-based software engineering agent for Assignment 2 Part 2. "
+      "It uses structured output, safe tools, and a custom agent loop."
+    ),
+  )
+
+  result = execute_tool_call(test)
+
+  print(result.model_dump_json(indent=2))"""
+
+
+
+
+
+from agent_loop import run_agent
+from config_loader import load_system_prompt
+
+
+def main() -> None:
+  system_prompt = load_system_prompt()
+
+  print("Assignment 2 Part 2 Agent")
+  print("Type a software engineering task for the agent.")
+  print()
+
+  user_task = input("Task: ").strip()
+
+  if not user_task:
+    print("No task provided.")
+    return
+
+  final_answer = run_agent(
+    user_task=user_task,
+    system_prompt=system_prompt,
+  )
+
+  print()
+  print("--------- FINAL ANSWER ---------")
+  print(final_answer)
+
+
 
 
 if __name__ == "__main__":

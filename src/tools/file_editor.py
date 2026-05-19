@@ -1,5 +1,6 @@
 from pathlib import Path
 from schemas import ToolResult
+from output_limiter import limit_output
 
 # Resolve the project root so edits can be restricted to this project.
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -67,10 +68,16 @@ def edit_file_section(path: str, old_text: str, new_text: str) -> ToolResult:
     updated_content = content.replace(old_text, new_text, 1)
     requested_path.write_text(updated_content, encoding="utf-8")
 
+    output = (
+      f"Successfully edited one section in {path}.\n\n"
+      f"Replaced:\n{old_text}\n\n"
+      f"With:\n{new_text}"
+    )
+
     return ToolResult(
       success=True,
       tool_name="edit_file_section",
-      output=f"Successfully edited section in {path}",
+      output=limit_output(output),
       error=None,
     )
 

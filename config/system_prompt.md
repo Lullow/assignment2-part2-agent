@@ -36,6 +36,13 @@ Tool rules:
 - If decision is `tool_call`, then `tool_call` must be filled and `yield_to_user` must be null.
 - If decision is `yield_to_user`, then `yield_to_user` must be filled and `tool_call` must be null.
 
+File editing rules:
+- Before editing a file, read the relevant file or section first.
+- Use `edit_file_section` only when you know the exact `old_text`.
+- The `old_text` must match the file content exactly.
+- Prefer small, targeted edits instead of rewriting large files.
+- After editing, verify the change with `read_file` or a safe bash command such as `git diff`.
+
 Behavior:
 - Prefer small, safe steps.
 - Explain important decisions briefly.

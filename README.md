@@ -1,6 +1,6 @@
 # Assignment 2 Part 2 Agent
 
-This is a Python-based software engineering agent for Assignment 2 Part 2.
+This is a Python-based SWE agent implementation for Assignment 2 Part 2. It features structured output and safety tools while maintaining full control over the agent loop.
 
 The goal of Part 2 is to build a stronger version of the Part 1 ReAct agent using structured output, while still keeping the agent loop, context handling, tool-calling, safety checks, and tool execution in our own Python code.
 

@@ -4,7 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from schemas import AgentDecision, validate_agent_decision
+from schemas import AgentDecision, validate_agent_decision, normalize_agent_decision
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -83,7 +83,10 @@ def get_agent_decision(messages: list[dict[str, str]]) -> AgentDecision:
     refusal = completion.choices[0].message.refusal
     raise ValueError(f"Model did not return a valid AgentDecision - Refusal: {refusal}")
 
-  # Validate tool-specific requerments before the agent loop uses the decision.
+
+  parsed_decision = normalize_agent_decision(parsed_decision)
+
+  # Validate the cleaned decision before the agent loop uses it.
   validate_agent_decision(parsed_decision)
 
   return parsed_decision

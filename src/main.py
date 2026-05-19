@@ -2,6 +2,8 @@
 from schemas import AgentDecision, ToolCall, YieldToUser, validate_agent_decision
 
 
+# ----------------- TEST 2---------------------
+
 # Test loader in config_loader.py
 def main() -> None:
   # Load the system prompt from the config file.
@@ -48,11 +50,8 @@ def main() -> None:
   print("Example final decision:")
   print(final_decision.model_dump_json(indent=2))"""
 
-
-
-
-
 """
+# ------------------- TEST 3 --------------------------
 from config_loader import load_system_prompt
 from llm_client import get_agent_decision
 
@@ -83,6 +82,9 @@ def main() -> None:
     print(decision.model_dump_json(indent=2))
 """
 
+
+"""
+# ---------------- TEST 4: ------------------
 from schemas import ToolCall
 from tool_registry import execute_tool_call
 
@@ -118,9 +120,41 @@ def main() -> None:
     print(f"Running tool: {test.tool_name}")
     result = execute_tool_call(test)
     print(result.model_dump_json(indent=2))
-    print("-" * 60)
+    print("-" * 60)"""
+
+
+from agent_loop import run_agent
+from config_loader import load_system_prompt
+
+
+def main() -> None:
+    # Load the system prompt from the configuration file.
+    # This defines the agent's role, rules, and behavior.
+    system_prompt = load_system_prompt()
+
+    print("Assignment 2 Part 2 Agent")
+    print("Type a software engineering task for the agent.")
+    print()
+
+    # Ask the user what task the agent should perform.
+    # strip() removes extra whitespace before and after the input.
+    user_task = input("Task: ").strip()
+
+    # Stop early if the user did not enter a task.
+    if not user_task:
+        print("No task provided.")
+        return
+
+    # Run the agent loop with the user's task and the loaded system prompt.
+    final_answer = run_agent(
+        user_task=user_task,
+        system_prompt=system_prompt,
+    )
+
+    print()
+    print("--------- FINAL ANSWER ---------")
+    print(final_answer)
 
 
 if __name__ == "__main__":
-  main()
-
+    main()

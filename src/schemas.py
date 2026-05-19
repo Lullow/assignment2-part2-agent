@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -128,47 +128,75 @@ class ToolResult(BaseModel):
   )
 
 
+def normalize_agent_decision(decision: AgentDecision) -> AgentDecision:
+  """
+  Clean up extra fields from the model response.
+
+  Some models may fill both tool_call and yield_to_user even though only one
+  should be used. We trust the decision field and remove the irrelevant part
+  before validation.
+  """
+
+  # If the model chose a tool call, remove any final-answer data.
+  # The agent should execute the tool first and continue after the observation.
+  if decision.decision == "tool_call":
+    return decision.model_copy(update={"yield_to_user": None})
+
+  # If the model chose to yield to the user, remove any tool-call data.
+  # This makes the final answer the only active action.
+  if decision.decision == "yield_to_user":
+    return decision.model_copy(update={"tool_call": None})
+
+  # Return unchanged if the decision type is unknown.
+  # The validator can handle invalid decision values later.
+  return decision
+
 
 def validate_agent_decision(decision: AgentDecision) -> None:
   """
-  Validate that the structured decision i internally consistent.
+  Validate that the structured decision is internally consistent.
 
   Pydantic validates the general shape of the object, but this function
-  checks the relationships between fields.
-
-  Example:
-  - If decision is "tool_call", then tool_call must exist.
-  - If decision is "yield_to_user", then yield_to_user must exist.
-  - The model should not provide both "tool_call" and "yield_to_user" at once.
+  checks the relationship between fields and tool-specific requirements.
   """
 
-  if decision.decision == "tool_call" and decision.tool_call is None:
-    raise ValueError("Decision is 'tool_call', but tool_call is missing.")
+  if decision.decision == "tool_call":
+    if decision.tool_call is None:
+      raise ValueError("Decision is 'tool_call', but tool_call is missing.")
 
-  if decision.decision == "yield_to_user" and decision.yield_to_user is None:
-    raise ValueError("Decision is 'yield_to_user', but yield_to_user is missing.")
+    if decision.yield_to_user is not None:
+        raise ValueError("Decision is 'tool_call', but yield_to_user was also provided.")
 
-  if decision.decision == "tool_call" and decision.yield_to_user is not None:
-    raise ValueError("Decision is 'tool_call', but yield_to_user was also provided.")
+    tool_call = decision.tool_call
 
-  if decision.decision == "yield_to_user" and decision.tool_call is not None:
-    raise ValueError("Decision is 'yield_to_user', but tool_call was also provided.")
+    if tool_call.tool_name == "bash":
+      if not tool_call.command:
+        raise ValueError("bash tool requires command.")
+      return
 
+    if tool_call.tool_name == "read_file":
+      if not tool_call.path:
+        raise ValueError("read_file tool requires path.")
+      return
 
-  tool_call = decision.tool_call
+    if tool_call.tool_name == "edit_file_section":
+      if not tool_call.path:
+        raise ValueError("edit_file_section tool requires path.")
+      if not tool_call.old_text:
+        raise ValueError("edit_file_section tool requires old_text.")
+      if tool_call.new_text is None:
+        raise ValueError("edit_file_section tool requires new_text.")
+      return
 
-  if tool_call.tool_name == "bash" and not tool_call.command:
-    raise ValueError("bash tool requires a command.")
+    raise ValueError(f"Unknown tool name: {tool_call.tool_name}")
 
-  if tool_call.tool_name == "read_file" and not tool_call.path:
-    raise ValueError("read_file_section requires a path.")
+  if decision.decision == "yield_to_user":
+    if decision.yield_to_user is None:
+      raise ValueError("Decision is 'yield_to_user', but yield_to_user is missing.")
 
-  if tool_call.tool_name == "edit_file_section":
-    if not tool_call.path:
-      raise ValueError("edit_file_section tool requires a path.")
-    if not tool_call.old_text:
-      raise ValueError("edit_file_section tool requires old_text.")
-    if tool_call.new_text is None:
-      raise ValueError("edit_file_section tool requires new_text.")
+    if decision.tool_call is not None:
+      raise ValueError("Decision is 'yield_to_user', but tool_call was also provided.")
 
+    return
 
+  raise ValueError(f"Unknown decision type: {decision.decision}")

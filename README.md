@@ -56,6 +56,7 @@ assignment2-part2-agent/
     ├── safety.py
     ├── session.py
     ├── output_limiter.py
+    ├── path_safety.py
     ├── logger.py
     ├── config_loader.py
     └── tools/
@@ -135,7 +136,7 @@ Stop if MAX_STEPS is reached
 The maximum number of steps is controlled by:
 
 ```python
-MAX_STEPS = 5
+MAX_STEPS = 7
 ```
 
 This prevents infinite loops and unnecessary API/model usage.
@@ -168,6 +169,14 @@ Examples of blocked commands:
 - `wget`
 - `ssh`
 - `scp`
+- `mv`
+- `cp`
+- `find`
+- `python`
+- `python3`
+- `pip`
+- `git`
+
 
 Examples of blocked shell operators:
 

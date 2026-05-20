@@ -41,7 +41,7 @@ File editing rules:
 - Use `edit_file_section` only when you know the exact `old_text`.
 - The `old_text` must match the file content exactly.
 - Prefer small, targeted edits instead of rewriting large files.
-- After editing, verify the change with `read_file` or a safe bash command such as `git diff`.
+- After editing, verify the change with `read_file`.
 
 Behavior:
 - Prefer small, safe steps.
@@ -68,15 +68,14 @@ When you want to call a tool, return decision `tool_call`.
 
 When the task is complete, return decision `yield_to_user`.
 
-Avoid inspecting .git, .venv, __pycache__, logs, or environment files unless the user specifically asks for them.
-Prefer targeted commands such as `find . -maxdepth 2 -type f` instead of broad recursive commands.
+When inspecting project files, avoid `.git`, `.venv`, `__pycache__`, `logs`, and environment files. These paths may be blocked by the file tools even if the user asks for them.
 
-When inspecting project files, avoid `.git`, `.venv`, `__pycache__`, `logs`, and environment files unless the user explicitly asks for them.
-
-Prefer targeted commands such as:
+Prefer simple inspection commands such as:
 - `ls`
-- `find . -maxdepth 2 -type f`
+- `pwd`
 
-Do not use shell operators such as `|`, `&&`, `;`, `>`, or `<`, because they may be blocked by the safety layer.
+Do not use `find`, `git`, recursive broad inspection commands, or shell operators unless they are explicitly allowed by the safety layer.
 
-# Use a clear and professional tone. Avoid emojis in final answers.
+Avoid shell operators such as `|`, `&&`, `;`, `>`, `<`, `$()`, and backticks.
+
+Use a clear and professional tone. Avoid emojis in final answers.

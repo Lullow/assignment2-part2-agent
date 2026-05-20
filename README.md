@@ -140,6 +140,16 @@ MAX_STEPS = 5
 
 This prevents infinite loops and unnecessary API/model usage.
 
+
+## Security Note
+
+This project uses guardrails such as command blocking, path validation, output limiting, and safe subprocess execution. However, it is not a full sandbox.
+
+The file tools also block sensitive or ignored project paths such as `.env`, `.git`, `.venv`, `logs`, and `__pycache__`.
+
+For stronger isolation, the agent should be run inside a container or another restricted environment.
+
+
 ## Safety
 
 The bash tool has a safety layer that blocks dangerous commands and shell operators.

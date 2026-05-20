@@ -12,6 +12,13 @@ BLOCKED_COMMANDS = {
   "wget",
   "ssh",
   "scp",
+  "mv",
+  "cp",
+  "find",
+  "python",
+  "python3",
+  "pip",
+  "git",
 }
 
 # Operators that allow chaining, redirection, command substitution, or piping.
@@ -34,6 +41,13 @@ BLOCKED_PATTERNS = {
   "wget | bash",
   "/dev/sda",
   "/dev/nvme",
+  "find -delete",
+  "git clean",
+  "git reset --hard",
+  "python -c",
+  "python3 -c",
+  "/bin/rm",
+  "/usr/bin/rm",
 }
 
 

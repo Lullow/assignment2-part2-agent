@@ -1,8 +1,9 @@
 # Assignment 2 Part 2 Agent
 
-This is a Python-based software engineering agent built for Assignment 2 Part 2.
+This project implements a Python-based software engineering agent for Assignment 2 Part 2.
 
-The goal of this project is to build a stronger version of the Part 1 ReAct agent by using structured output, while still keeping the agent loop, context handling, tool calling, safety checks, and tool execution in our own Python code.
+The goal of this project is to build a stronger version of the Part 1 ReAct agent using structured output, while still keeping full control over the agent loop, context handling, tool routing, safety checks, and tool execution in custom Python code.
+
 
 ## What This Agent Can Do
 

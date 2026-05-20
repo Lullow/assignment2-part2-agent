@@ -6,7 +6,7 @@ from logger import AgentLogger
 
 # Limit how many times the agent is allowed to loop.
 # This prevents infinite loops and unnecessary API/tool usage.
-MAX_STEPS = 5
+MAX_STEPS = 7
 
 
 def run_agent(user_task: str, system_prompt: str) -> str:

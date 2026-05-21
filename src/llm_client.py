@@ -13,16 +13,15 @@ ENV_PATH = PROJECT_ROOT / ".env"
 
 def load_enviroment() -> None:
   """
-  Load the enviroment variables from the project .env file.
+  Load environment variables.
+
+  In local development, values can come from a .env file.
+  In Docker, values are passed directly as environment variables, so .env
+  does not need to exist inside the container.
   """
 
-  if not ENV_PATH.exists():
-    raise FileNotFoundError(f".env file not found at: {ENV_PATH}")
-
-  loaded = load_dotenv(dotenv_path=ENV_PATH, override=True)
-
-  if not loaded:
-    raise ValueError(f"Could not load .env file from: {ENV_PATH}")
+  if ENV_PATH.exists():
+    load_dotenv(dotenv_path=ENV_PATH, override=True)
 
 
 
